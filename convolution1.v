@@ -1,17 +1,28 @@
 
-module convolution1(
+module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_device,featuremap1,finished_for_next_device
 	
-	input [28*28*bitwidth-1:0] image,
-	input [5*5*bitwidth-1:0] kernel1,
-	input [5*5*bitwidth-1:0] kernel2,
-	input clk,
-	input reset,
-	input enable,
-	input reply_from_next_device,
-	output reg [2*28*28*bitwidth-1:0] featuremap1,
-	output reg finished_for_next_device
+//	input [28*28*bitwidth-1:0] image,
+//	input [5*5*bitwidth-1:0] kernel1,
+//	input [5*5*bitwidth-1:0] kernel2,
+//	input clk,
+//	input reset,
+//	input enable,
+//	input reply_from_next_device,
+//	output reg [2*28*28*bitwidth-1:0] featuremap1,
+//	output reg finished_for_next_device
 	);
 	parameter bitwidth=32;
+	
+	input [28*28*bitwidth-1:0] image;
+	input [5*5*bitwidth-1:0] kernel1;
+	input [5*5*bitwidth-1:0] kernel2;
+	input clk;
+	input reset;
+	input enable;
+	input reply_from_next_device;
+	output reg [2*28*28*bitwidth-1:0] featuremap1;
+	output reg finished_for_next_device;
+	
 	
 	reg [bitwidth-1:0] image_2d [31:0][31:0];
 	reg [bitwidth-1:0] kernel1_2d [4:0][4:0] ;
@@ -93,8 +104,8 @@ module convolution1(
 				for (i=0;i<28;i=i+1) begin
 					for (conv_i=0;conv_i<5;conv_i=conv_i+1) begin
 						for (conv_j=0;conv_j<5;conv_j=conv_j+1) begin
-							featuremap_kernel1_2d[i][counter_for_MAC] <=  featuremap_kernel1_2d[counter_for_MAC][i]+kernel1_2d[conv_i][conv_j]*image_2d[conv_i+i][conv_j+counter_for_MAC];
-							featuremap_kernel2_2d[i][counter_for_MAC] <=  featuremap_kernel2_2d[counter_for_MAC][i]+kernel2_2d[conv_i][conv_j]*image_2d[conv_i+i][conv_j+counter_for_MAC];
+							featuremap_kernel1_2d[i][counter_for_MAC] =  featuremap_kernel1_2d[counter_for_MAC][i]+kernel1_2d[conv_i][conv_j]*image_2d[conv_i+i][conv_j+counter_for_MAC];
+							featuremap_kernel2_2d[i][counter_for_MAC] =  featuremap_kernel2_2d[counter_for_MAC][i]+kernel2_2d[conv_i][conv_j]*image_2d[conv_i+i][conv_j+counter_for_MAC];
 						end
 					end
 				end
