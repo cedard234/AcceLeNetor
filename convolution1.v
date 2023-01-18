@@ -1,30 +1,34 @@
+
 module convolution1(
-	input [783:0] image,
-	input [24:0] kernel1,
-	input [24:0] kernel2,
+	
+	input [28*28*bitwidth-1:0] image,
+	input [5*5*bitwidth-1:0] kernel1,
+	input [5*5*bitwidth-1:0] kernel2,
 	input clk,
 	input reset,
 	input enable,
 	input reply_from_next_device,
-	output reg [1567:0] featuremap1,
+	output reg [2*28*28*bitwidth-1:0] featuremap1,
 	output reg finished_for_next_device
 	);
+	parameter bitwidth=32;
 	
-	reg [31:0] image_2d [31:0];
-	reg [4:0] kernel1_2d [4:0] ;
-	reg [4:0] kernel2_2d [4:0] ;
-	reg [27:0] featuremap_kernel1_2d [27:0];
-	reg [27:0] featuremap_kernel2_2d [27:0];
+	reg [bitwidth-1:0] image_2d [31:0][31:0];
+	reg [bitwidth-1:0] kernel1_2d [4:0][4:0] ;
+	reg [bitwidth-1:0] kernel2_2d [4:0][4:0] ;
+	reg [bitwidth-1:0] featuremap_kernel1_2d [27:0][27:0];
+	reg [bitwidth-1:0] featuremap_kernel2_2d [27:0][27:0];
 	// reg [4:0] convolution_result_kernel1[4:0];
 	// reg [4:0] convolution_result_kernel2[4:0];
 	
 	reg [4:0] counter_for_MAC;
 
+	//FSM parameters
 	reg [1:0] state;
 	parameter idle=0,read_image=1,process_image=2,finished=3;
 	reg [1:0] next_state;
 	
-	integer i,j,conv_i,conv_j,i1,i2;
+	integer i,j,conv_i,conv_j;
 
 
 	
@@ -42,23 +46,27 @@ module convolution1(
 			finished		: next_state = reply_from_next_device?idle:finished;
 		endcase
 		end
-		
-
 	
 	always@(posedge clk or posedge reset) begin
 		if (reset) begin
 			counter_for_MAC = 5'b0;
 			
 			for (i=0;i<28;i=i+1) begin
-				featuremap_kernel1_2d [i] = 0;
-				featuremap_kernel2_2d [i] = 0;
+				for (j=0;j<28;j=j+1) begin
+					featuremap_kernel1_2d [i][j] = 0;
+					featuremap_kernel2_2d [i][j] = 0;
+				end
 			end
 			for (i=0;i<5;i=i+1) begin
-				kernel1_2d [i] = 0;
-				kernel2_2d [i] = 0;
+				for (j=0;j<5;j=j+1) begin
+					kernel1_2d [i][j] = 0;
+					kernel2_2d [i][j] = 0;
+				end
 			end
 			for (i=0;i<32;i=i+1) begin
-				image_2d [i] = 0;
+				for (j=0;j<32;j=j+1) begin
+					image_2d [i][j] = 0;
+				end
 			end
 			state = idle;
 			
@@ -66,16 +74,17 @@ module convolution1(
 		else begin
 			if (state == read_image) begin
 			//in the state of read_image, try to convert input image and kernel1 and kernel2 into inner register type.
-				integer i;
 				for (i=0;i<28;i=i+1) begin
 				// padding calculation.
-					image_2d[i+2][29:2] <= image[i*27+:28];
+					for (j=0;j<28;j=j+1) begin
+						image_2d[i+2][j+2] <= image[(28*j+i)*bitwidth+:bitwidth];
+					end
 				end
-				
-//				integer j;
-				for (j=0;j<5;j=j+1) begin
-					kernel1_2d[j] <= kernel1[j*5+:5];
-					kernel2_2d[j] <= kernel2[j*5+:5];
+				for (i=0;i<5;i=i+1) begin
+					for (j=0;j<5;j=j+1) begin
+						kernel1_2d[i][j] <= kernel1[(5*j+i)*bitwidth+:bitwidth];
+						kernel2_2d[i][j] <= kernel2[(5*j+i)*bitwidth+:bitwidth];
+					end
 				end
 			end
 			else if (state == process_image) begin
@@ -97,12 +106,11 @@ module convolution1(
 	end
 
 	always@(*) begin
-		for (i1=0;i1<28;i1=i1+1) begin
-			featuremap1[28*i1+:28] <= featuremap_kernel1_2d[i1];
-		end
-
-		for (i2=28;i2<56;i2=i2+1) begin
-			featuremap1[28*i2+:28] <= featuremap_kernel2_2d[i2-28];
+		for (i=0;i<28;i=i+1) begin
+			for (j=0;j<28;j=j+1) begin
+				featuremap1[(28*j+i)*bitwidth+:bitwidth] <= featuremap_kernel1_2d[i][j];
+				featuremap1[(28*28+28*j+i)*bitwidth+:bitwidth] <= featuremap_kernel2_2d[i][j];
+			end
 		end
 		finished_for_next_device = (state==finished);
 	end
