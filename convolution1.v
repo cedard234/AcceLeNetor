@@ -1,18 +1,9 @@
+module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_device,featuremap1,finished_for_next_device);
 
-module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_device,featuremap1,finished_for_next_device
-	
-//	input [28*28*bitwidth-1:0] image,
-//	input [5*5*bitwidth-1:0] kernel1,
-//	input [5*5*bitwidth-1:0] kernel2,
-//	input clk,
-//	input reset,
-//	input enable,
-//	input reply_from_next_device,
-//	output reg [2*28*28*bitwidth-1:0] featuremap1,
-//	output reg finished_for_next_device
-	);
+	//bitwidth
 	parameter bitwidth=32;
 	
+	//I/O
 	input [28*28*bitwidth-1:0] image;
 	input [5*5*bitwidth-1:0] kernel1;
 	input [5*5*bitwidth-1:0] kernel2;
@@ -23,26 +14,23 @@ module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_devic
 	output reg [2*28*28*bitwidth-1:0] featuremap1;
 	output reg finished_for_next_device;
 	
-	
+	//internal variables
 	reg [bitwidth-1:0] image_2d [31:0][31:0];
 	reg [bitwidth-1:0] kernel1_2d [4:0][4:0] ;
 	reg [bitwidth-1:0] kernel2_2d [4:0][4:0] ;
 	reg [bitwidth-1:0] featuremap_kernel1_2d [27:0][27:0];
 	reg [bitwidth-1:0] featuremap_kernel2_2d [27:0][27:0];
-	// reg [4:0] convolution_result_kernel1[4:0];
-	// reg [4:0] convolution_result_kernel2[4:0];
 	
+	//counters
 	reg [4:0] counter_for_MAC;
+	integer i,j,conv_i,conv_j;
 
 	//FSM parameters
 	reg [1:0] state;
 	parameter idle=0,read_image=1,process_image=2,finished=3;
 	reg [1:0] next_state;
 	
-	integer i,j,conv_i,conv_j;
-
-
-	
+	//state transition logic.
 	always@(*) begin
 	// I use finite state machine to direct the flow of states.
 	// There are in total of 4 states: idle, read_image,process_image and finished.
@@ -54,10 +42,11 @@ module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_devic
 			idle			:	next_state = enable?read_image:idle;
 			read_image	:	next_state = process_image;
 			process_image: next_state = (counter_for_MAC==28)?finished:process_image;
-			finished		: next_state = reply_from_next_device?idle:finished;
+			finished		: next_state = reply_from_next_device?(enable?read_image:idle):finished;
 		endcase
 		end
 	
+	//state logic.
 	always@(posedge clk or posedge reset) begin
 		if (reset) begin
 			counter_for_MAC = 5'b0;
@@ -108,6 +97,13 @@ module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_devic
 							featuremap_kernel2_2d[i][counter_for_MAC] =  featuremap_kernel2_2d[counter_for_MAC][i]+kernel2_2d[conv_i][conv_j]*image_2d[conv_i+i][conv_j+counter_for_MAC];
 						end
 					end
+					// ReLU activation function
+					if (featuremap_kernel1_2d[i][counter_for_MAC][31]) begin
+						featuremap_kernel1_2d[i][counter_for_MAC] = 32'b0;
+					end
+					if (featuremap_kernel2_2d[i][counter_for_MAC][31]) begin
+						featuremap_kernel2_2d[i][counter_for_MAC] = 32'b0;
+					end
 				end
 				counter_for_MAC = counter_for_MAC+1;
 			end
@@ -116,6 +112,7 @@ module convolution1(image,kernel1,kernel2,clk,reset,enable,reply_from_next_devic
 		end
 	end
 
+	//output logic.
 	always@(*) begin
 		for (i=0;i<28;i=i+1) begin
 			for (j=0;j<28;j=j+1) begin
