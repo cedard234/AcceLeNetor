@@ -52,6 +52,7 @@ module Lenet_accelerator_testbench();
         for (i=0;i<10;i=i+1) begin
             connect_matrix[i][i]=1;
         end
+        #85 image[0][0]=3;
 	end
     
     Lenet_accelerator Lenet_accelerator_inst(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,connect_matrix,output_vector);

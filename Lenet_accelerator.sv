@@ -12,6 +12,7 @@ module Lenet_accelerator(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,conne
 	int i,j;
 
 	//conv1, actv1, maxp1: first layers(first stage)
+	reg [bitwidth-1:0] image_buffer [27:0][27:0];
 	reg [bitwidth-1:0] image_padded [31:0][31:0];
 	wire [bitwidth-1:0] actv1_featuremap [1:0][27:0][27:0];
 	wire [bitwidth-1:0] maxp1_featuremap [1:0][27:0][27:0];
@@ -25,6 +26,7 @@ module Lenet_accelerator(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,conne
 	reg [bitwidth-1:0] conv3_featuremap [1:0][4:0][4:0];
 	wire [bitwidth-1:0] actv3_featuremap [9:0];
 	wire [bitwidth-1:0] featuremap3 [9:0];
+	reg [bitwidth-1:0] output_buffer[9:0];
 	output reg [bitwidth-1:0] output_vector[9:0];
 
 	conv_layer_1 conv_layer_1_inst(image_padded,conv1_kernel,actv1_featuremap);
@@ -37,7 +39,7 @@ module Lenet_accelerator(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,conne
 
 	conv_layer_3 conv_layer_3_inst(conv3_featuremap,conv3_kernel,actv3_featuremap);
 	activation_layer_3 activation_layer_3_inst(actv3_featuremap, featuremap3);
-	fully_connect_layer fully_connect_layer_inst(featuremap3,connect_matrix,output_vector);
+	fully_connect_layer fully_connect_layer_inst(featuremap3,connect_matrix,output_buffer);
 
 
 	always@(*) begin 
@@ -49,15 +51,17 @@ module Lenet_accelerator(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,conne
 
 		for (i=0;i<28;i=i+1) begin
 			for (j=0;j<28;j=j+1) begin
-				image_padded [i+2][j+2] = image[i][j];
+				image_padded [i+2][j+2] = image_buffer[i][j];
 			end
 		end
 	end
 
 	
 	always@(posedge clk) begin
+		image_buffer <= image;
 		conv2_featuremap <= featuremap1;
 		conv3_featuremap <= featuremap2;
+		output_vector <= output_buffer;
 	end
 	
 endmodule
