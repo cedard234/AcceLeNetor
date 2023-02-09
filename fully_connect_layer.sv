@@ -8,12 +8,12 @@ module fully_connect_layer(featuremap3,connect_matrix,output_vector);
 
     int i,j;
     always@(*) begin
-        for (i=0;i<10;i=i+1) begin
-            intermediate_output[i] = 0;
-            for (j=0;j<10;j=j+1) begin
-                intermediate_output[i] = intermediate_output[i]+ featuremap3[i]*connect_matrix[i][j];
+        for (j=0;j<10;j=j+1) begin
+            intermediate_output[j] = 0;
+            for (i=0;i<10;i=i+1) begin
+                intermediate_output[j] = intermediate_output[j]+ featuremap3[i]*connect_matrix[i][j];
             end
-            output_vector[i] = intermediate_output[i]>>(bitwidth);
+            output_vector[j] = intermediate_output[j]>>(bitwidth);
         end
     end
 endmodule

@@ -1,6 +1,6 @@
 module convolution_point(map_block,kernel,value);
     //module for convolution operation
-    parameter bitwidth=32;
+    parameter bitwidth=16;
     parameter shift=0;
 
     input signed [bitwidth-1:0] map_block [4:0][4:0];

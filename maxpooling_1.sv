@@ -1,6 +1,6 @@
 `include "max.sv"
 module maxpooling_1(featuremap,featuremap_maxpooled);
-    parameter bitwidth=32;
+    parameter bitwidth=16;
 
     // function [bitwidth:0] min;
     // input [bitwidth:0] a,b,c,d;

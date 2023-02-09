@@ -1,5 +1,5 @@
 module activation_layer_3(featuremap,featuremap_RELUed);
-    parameter bitwidth = 32;
+    parameter bitwidth = 16;
 
     input signed [bitwidth-1:0] featuremap [9:0];
     output reg signed [bitwidth-1:0] featuremap_RELUed[9:0];

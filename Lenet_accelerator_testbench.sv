@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 module Lenet_accelerator_testbench();
 
-	parameter bitwidth = 32;
+	parameter bitwidth = 16;
 	reg signed [bitwidth-1:0] image [27:0][27:0];
 	reg clk;
 	reg signed [bitwidth-1:0] conv1_kernel [1:0][4:0][4:0];
@@ -45,15 +45,16 @@ module Lenet_accelerator_testbench();
 	end
 
     initial begin
-		image[0][0]=1;
-        conv1_kernel[0][0][0]=1;
-        conv2_kernel[0][0][0][0]=1;
-        conv3_kernel[0][0][0][0]=1;
+		image[0][0]=2**(bitwidth-3);
+        conv1_kernel[0][0][0]=2**(bitwidth-2);
+        conv2_kernel[0][0][0][0]=2**(bitwidth-3);
+        conv3_kernel[0][0][0][0]=2**(bitwidth-3);
         for (i=0;i<10;i=i+1) begin
-            connect_matrix[i][i]=1;
+            connect_matrix[i][i]=2**(bitwidth-3);
         end
-        #85 image[0][0]=3;
+        #85 image[0][0]=2**(bitwidth-4);
+        #85 image[0][0]=2**(bitwidth-5);
 	end
     
-    Lenet_accelerator Lenet_accelerator_inst(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,connect_matrix,output_vector);
+    Lenet_accelerator #(bitwidth) Lenet_accelerator_inst(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,connect_matrix,output_vector);
     endmodule
