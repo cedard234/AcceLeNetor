@@ -12,8 +12,8 @@ module maxpooling_1(featuremap,featuremap_maxpooled);
     // end
     // endfunction
 
-    input [bitwidth-1:0] featuremap [1:0][27:0][27:0];
-    output reg [bitwidth-1:0] featuremap_maxpooled [1:0][13:0][13:0];
+    input signed [bitwidth-1:0] featuremap [1:0][27:0][27:0];
+    output reg signed [bitwidth-1:0] featuremap_maxpooled [1:0][13:0][13:0];
 
     int i,j;
     always@(*) begin

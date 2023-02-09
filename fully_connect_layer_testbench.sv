@@ -2,9 +2,9 @@ module fully_connect_layer_testbench();
  
     parameter bitwidth = 32;
 
-    reg [bitwidth-1:0] featuremap3[9:0];
-    reg [bitwidth-1:0] connect_matrix [9:0][9:0];
-    reg [bitwidth-1:0] output_vector [9:0];
+    reg signed [bitwidth-1:0] featuremap3[9:0];
+    reg signed [bitwidth-1:0] connect_matrix [9:0][9:0];
+    reg signed [bitwidth-1:0] output_vector [9:0];
 
     fully_connect_layer fully_connect_layer_instance(featuremap3,connect_matrix,output_vector);
 

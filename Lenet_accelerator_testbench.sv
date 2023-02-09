@@ -2,13 +2,13 @@
 module Lenet_accelerator_testbench();
 
 	parameter bitwidth = 32;
-	reg [bitwidth-1:0] image [27:0][27:0];
+	reg signed [bitwidth-1:0] image [27:0][27:0];
 	reg clk;
-	reg [bitwidth-1:0] conv1_kernel [1:0][4:0][4:0];
-	reg [bitwidth-1:0] conv2_kernel [1:0][1:0][4:0][4:0];
-	reg [bitwidth-1:0] conv3_kernel [9:0][1:0][4:0][4:0];
-	reg [bitwidth-1:0] connect_matrix [9:0][9:0];
-    reg [bitwidth-1:0] output_vector [9:0];
+	reg signed [bitwidth-1:0] conv1_kernel [1:0][4:0][4:0];
+	reg signed [bitwidth-1:0] conv2_kernel [1:0][1:0][4:0][4:0];
+	reg signed [bitwidth-1:0] conv3_kernel [9:0][1:0][4:0][4:0];
+	reg signed [bitwidth-1:0] connect_matrix [9:0][9:0];
+    reg signed [bitwidth-1:0] output_vector [9:0];
     
     int i,j,k;
     initial begin

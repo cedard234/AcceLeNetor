@@ -1,6 +1,6 @@
 parameter bitwidth=32;
 function [bitwidth:0] max;
-input [bitwidth:0] a,b,c,d;
+input signed [bitwidth:0] a,b,c,d;
 begin
     max = a;
     if (max<b) max = b;

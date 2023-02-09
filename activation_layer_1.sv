@@ -1,8 +1,8 @@
 module activation_layer_1(featuremap,featuremap_RELUed);
     parameter bitwidth = 32;
 
-    input [bitwidth-1:0] featuremap [1:0][27:0][27:0];
-    output reg [bitwidth-1:0] featuremap_RELUed[1:0][27:0][27:0];
+    input signed [bitwidth-1:0] featuremap [1:0][27:0][27:0];
+    output reg signed [bitwidth-1:0] featuremap_RELUed[1:0][27:0][27:0];
 
     int i,j;
 

@@ -3,14 +3,14 @@ module conv_layer_2(featuremap1,kernel,featuremap2);
 
     parameter bitwidth=32;
 
-    input [bitwidth-1:0] featuremap1 [1:0][13:0][13:0];
-    input [bitwidth-1:0] kernel [1:0][1:0][4:0][4:0];
+    input signed [bitwidth-1:0] featuremap1 [1:0][13:0][13:0];
+    input signed [bitwidth-1:0] kernel [1:0][1:0][4:0][4:0];
 
-    output reg [bitwidth-1:0] featuremap2 [1:0][9:0][9:0];
+    output reg signed [bitwidth-1:0] featuremap2 [1:0][9:0][9:0];
 
-	wire [bitwidth-1:0] featuremap_sliced [1:0][9:0][9:0][4:0][4:0]; //channel, row, column, subrow,subcolumn
+	wire signed [bitwidth-1:0] featuremap_sliced [1:0][9:0][9:0][4:0][4:0]; //channel, row, column, subrow,subcolumn
 
-    wire [bitwidth-1:0] conv_intermediate_result [1:0][1:0][9:0][9:0];//kernel, channel, row, column
+    wire signed [bitwidth-1:0] conv_intermediate_result [1:0][1:0][9:0][9:0];//kernel, channel, row, column
     
 	genvar i,j,k,l,m;
 	generate
@@ -22,11 +22,11 @@ module conv_layer_2(featuremap1,kernel,featuremap2);
                         assign featuremap_sliced[1][i][j][l][k] = featuremap1[1][i+l][j+k];
 				end
 			end
-			convolution_point convolution_kernel1_channel1(featuremap_sliced[0][i][j],kernel[0][0],conv_intermediate_result[0][0][i][j]);
-            convolution_point convolution_kernel1_channel2(featuremap_sliced[1][i][j],kernel[0][1],conv_intermediate_result[0][1][i][j]);
+			convolution_point #(bitwidth,0) convolution_kernel1_channel1(featuremap_sliced[0][i][j],kernel[0][0],conv_intermediate_result[0][0][i][j]);
+            convolution_point #(bitwidth,0) convolution_kernel1_channel2(featuremap_sliced[1][i][j],kernel[0][1],conv_intermediate_result[0][1][i][j]);
             assign featuremap2[0][i][j] = conv_intermediate_result[0][0][i][j]+conv_intermediate_result[0][1][i][j];
-			convolution_point convolution_kernel2_channel1(featuremap_sliced[0][i][j],kernel[1][0],conv_intermediate_result[1][0][i][j]);
-            convolution_point convolution_kernel2_channel2(featuremap_sliced[1][i][j],kernel[1][1],conv_intermediate_result[1][1][i][j]);
+			convolution_point #(bitwidth,0) convolution_kernel2_channel1(featuremap_sliced[0][i][j],kernel[1][0],conv_intermediate_result[1][0][i][j]);
+            convolution_point #(bitwidth,0) convolution_kernel2_channel2(featuremap_sliced[1][i][j],kernel[1][1],conv_intermediate_result[1][1][i][j]);
 			assign featuremap2[1][i][j] = conv_intermediate_result[1][0][i][j]+conv_intermediate_result[1][1][i][j];
             end 
 		end
