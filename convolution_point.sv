@@ -5,8 +5,8 @@ module convolution_point(map_block,kernel,value);
 
     input signed [bitwidth-1:0] map_block [4:0][4:0];
     input signed [bitwidth-1:0] kernel [4:0][4:0];
-    reg signed [2*bitwidth-1:0] intermediate_value;
-    output [bitwidth-1:0] value;
+    reg signed [2*bitwidth-2:0] intermediate_value;
+    output signed [bitwidth-1:0] value;
 
     
     integer i,j;
@@ -19,6 +19,7 @@ module convolution_point(map_block,kernel,value);
         end
     end
     
-    assign value = intermediate_value >> (shift);
+    assign value = intermediate_value >>> shift;
+    // assign value = intermediate_value[shift+1+:bitwidth];
 
 endmodule

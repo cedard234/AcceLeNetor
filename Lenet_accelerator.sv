@@ -1,6 +1,7 @@
 
 module Lenet_accelerator(clk, image,conv1_kernel,conv2_kernel,conv3_kernel,connect_matrix,output_vector);
 	parameter top_bitwidth = 16;
+	
 	input signed [top_bitwidth-1:0] image [27:0][27:0];
 	// input reset;
 	input clk;

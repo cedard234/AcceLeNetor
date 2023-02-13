@@ -13,7 +13,7 @@ module fully_connect_layer(featuremap3,connect_matrix,output_vector);
             for (i=0;i<10;i=i+1) begin
                 intermediate_output[j] = intermediate_output[j]+ featuremap3[i]*connect_matrix[j][i];
             end
-            output_vector[j] = intermediate_output[j]>>(16);
+            output_vector[j] = intermediate_output[j]>>(14);
         end
     end
 endmodule
