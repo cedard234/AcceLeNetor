@@ -19,6 +19,6 @@ module convolution_point(map_block,kernel,value);
         end
     end
     
-    assign value = intermediate_value >> (bitwidth-shift);
+    assign value = intermediate_value >> (shift);
 
 endmodule

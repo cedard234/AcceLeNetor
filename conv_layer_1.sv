@@ -19,8 +19,8 @@ module conv_layer_1(image_padded,kernel,featuremap);
 						assign image_sliced[i][j][l][k] = image_padded[i+l][j+k];
 				end
 			end
-			convolution_point #(bitwidth,8) convolution_kernel1(image_sliced[i][j],kernel[0],featuremap[0][i][j]);
-			convolution_point #(bitwidth,8) convolution_kernel2(image_sliced[i][j],kernel[1],featuremap[1][i][j]);
+			convolution_point #(bitwidth,16) convolution_kernel1(image_sliced[i][j],kernel[0],featuremap[0][i][j]);
+			convolution_point #(bitwidth,16) convolution_kernel2(image_sliced[i][j],kernel[1],featuremap[1][i][j]);
 			end 
 		end
 	endgenerate
