@@ -1,4 +1,4 @@
-`include "max.sv"
+// `include "max.sv"
 module maxpooling_2(featuremap,featuremap_maxpooled);
     parameter bitwidth=16;
 
