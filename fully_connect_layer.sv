@@ -1,5 +1,5 @@
 module fully_connect_layer(featuremap3,connect_matrix,output_vector);
-    parameter bitwidth = 16;
+    parameter bitwidth = 8;
 
     input signed [bitwidth-1:0] featuremap3[9:0];
     input signed [bitwidth-1:0] connect_matrix [9:0][9:0];
@@ -13,7 +13,7 @@ module fully_connect_layer(featuremap3,connect_matrix,output_vector);
             for (i=0;i<10;i=i+1) begin
                 intermediate_output[j] = intermediate_output[j]+ featuremap3[i]*connect_matrix[j][i];
             end
-            output_vector[j] = intermediate_output[j]>>(8);
+            output_vector[j] = intermediate_output[j]>>(7);
         end
     end
 endmodule

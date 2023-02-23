@@ -5,7 +5,7 @@ module convolution_point(map_block,kernel,value);
 
     input signed [bitwidth-1:0] map_block [4:0][4:0];
     input signed [bitwidth-1:0] kernel [4:0][4:0];
-    reg signed [2*bitwidth-1:0] intermediate_value;
+    reg signed [2*bitwidth:0] intermediate_value;
     output signed [bitwidth-1:0] value;
 
     
